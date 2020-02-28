@@ -96,8 +96,6 @@ function sendMessageToMe(base64EncodedEmail, gmail) {
         })
 }
 
-
-
 function checkNewSMSAndSend(gmail) {
     fs.readdir(inboxPath, function (err, inbox) {
         console.log(inbox)
@@ -108,10 +106,10 @@ function checkNewSMSAndSend(gmail) {
                 let fn = inbox[i];
                 fs.readFile(path.resolve(inboxPath, fn), 'utf8', (err, data) => {
                     if (err) return console.log(err)
-                    // let archivePath = path.resolve(path.resolve(archiveFolder), fn);
-                    // sendMessageToMe(createMessageBody(fn, data), gmail);
+                    sendMessageToMe(createMessageBody(fn, data), gmail);
                     // move sms sent to archive
-                    fs.rename(path.resolve(inboxPath, fn), path.resolve(archivePath, fn), () => {
+                    fs.rename(path.resolve(inboxPath, fn), path.resolve(archivePath, fn), (err) => {
+                        if (err) throw err;
                         console.log(`Archived ${fn}`);
                     })
                     waitSync(3)
