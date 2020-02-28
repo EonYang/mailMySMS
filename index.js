@@ -98,7 +98,6 @@ function sendMessageToMe(base64EncodedEmail, gmail) {
 
 function checkNewSMSAndSend(gmail) {
     fs.readdir(inboxPath, function (err, inbox) {
-        console.log(inbox)
         if (err) return console.log(err);
         if (inbox.length == 0) console.log(`No new SMS, ${new Date(Date.now()).toLocaleDateString('en-US', localTimeOptions)}`)
         else {
