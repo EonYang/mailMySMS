@@ -41,13 +41,13 @@ module.exports = {
 ```
 
 #### Run this script
-`nvm use 12.19`
+`nvm use 12.16`
 `npm install`
 `node index.js`
 
 #### Run it forever
 `npm install pm2 -g`
-`pm2 start index.js`
+`sudo pm2 start index.js`
 
 
 ## How to set up Raspberry Pi and GSM module.
