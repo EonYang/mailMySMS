@@ -49,6 +49,10 @@ module.exports = {
 `npm install pm2 -g`
 `sudo pm2 start index.js`
 
+```
+sudo /home/pi/.nvm/versions/node/v12.16.1/bin/node /home/pi/.nvm/versions/node/v12.16.1/bin/pm2 index.js
+```
+
 
 ## How to set up Raspberry Pi and GSM module.
 
