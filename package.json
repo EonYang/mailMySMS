@@ -1,0 +1,30 @@
+{
+  "name": "mailmysms",
+  "version": "1.0.0",
+  "description": "Automatically receive SMS on my Pi and email it to me.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EonYang/mailMySMS.git"
+  },
+  "keywords": [
+    "raspberry",
+    "pi",
+    "SMS",
+    "email"
+  ],
+  "author": "Yang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EonYang/mailMySMS/issues"
+  },
+  "homepage": "https://github.com/EonYang/mailMySMS#readme",
+  "dependencies": {
+    "googleapis": "^39.2.0",
+    "mimetext": "^0.2.1",
+    "wait-sync": "^1.0.1"
+  }
+}
