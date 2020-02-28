@@ -45,13 +45,11 @@ module.exports = {
 `npm install`
 `node index.js`
 
+If you encounter permission errors, check the ownership of your sms folder.
+
 #### Run it forever
 `npm install pm2 -g`
-`sudo pm2 start index.js`
-
-```
-sudo /home/pi/.nvm/versions/node/v12.16.1/bin/node /home/pi/.nvm/versions/node/v12.16.1/bin/pm2 index.js
-```
+`pm2 start index.js`
 
 
 ## How to set up Raspberry Pi and GSM module.
