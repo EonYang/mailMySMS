@@ -4,7 +4,7 @@ This Nodejs script checks if there are SMS messages received by my Raspberry Pi,
 
 ![The GSM Module](./docs/images/My_GSM_Module.jpg "The GSM Module")
 
-![Working Gif](./docs/images/Screen Recording_mailSMSPi.gif "It tooks around 30 seconds to receive the email")
+![Working Gif](./docs/images/ScreenRecording_mailSMSPi.gif "It tooks around 30 seconds to receive the email")
 
 
 ## Part one
