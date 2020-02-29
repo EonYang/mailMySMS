@@ -2,9 +2,10 @@
 
 This Nodejs script checks if there are SMS messages received by my Raspberry Pi, and automatically sends them to designated emaill address when found.
 
-![The GSM Module](./docs/images/My_GSM_Module.jpg "The GSM Module")
+<img src="./docs/images/My_GSM_Module.jpg" alt="The GSM Module" height="200"/>
 
-![Working Gif](./docs/images/ScreenRecording_mailSMSPi.gif "It tooks around 30 seconds to receive the email")
+<img src="./docs/images/ScreengiRecording_mailSMSPi.gif" alt="Working Gif" height="200"/>
+
 
 
 ## Part one
