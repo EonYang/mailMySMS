@@ -120,7 +120,7 @@ https://escapologybb.com/send-sms-from-raspberry-pi/
 ### 0, Preparation.
 
 * Setup you Raspberry Pi, Raspbian or Linux.
-* Get a USB GSM/3G/4G module. I use an old GSM module I bought years ago
+* Get a USB GSM/3G/4G module. I use an old GSM module I bought years ago. [Link](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.6fd82e8dtdibvC&id=542608922284&_u=s2ic10pfd73)
 * Enable your Gamil API at [here](https://developers.google.com/gmail/api/quickstart/nodejs), and download your `credentials.json`.
 
 ### 1, Plug the USB GSM module and insert you SIM card.

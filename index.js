@@ -1,23 +1,30 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const waitSync = require('wait-sync');
-const MIMEText = require('mimetext')
-const config = require('./config');
+const MIMEText = require('mimetext');
+const util = require('util');
 const {
-    google
+    google,
 } = require('googleapis');
 const {
+    INBOX_PATH,
+    ARCHIVE_PATH,
     TOKEN_PATH,
     CREDENTIALS_PATH,
     SCOPES,
-    myEmail,
+    MY_EMAIL,
     localTimeOptions,
-    checkInterval
-} = config
+    CHECK_INTERVAL,
+} = require('./config');
 
-let inboxPath = path.resolve(config.inboxPath);
-let archivePath = path.resolve(config.archivePath);
+const inboxPath = path.resolve(INBOX_PATH);
+const archivePath = path.resolve(ARCHIVE_PATH);
+
+const readFile = util.promisify(fs.readFile);
+const rename = util.promisify(fs.rename);
 
 let gmail;
 
@@ -31,10 +38,11 @@ fs.readFile(CREDENTIALS_PATH, (err, content) => {
             auth: oAuth2Client
         })
 
+        checkNewSMSAndSend(gmail);
         // start the main loop
         setInterval(() => {
             checkNewSMSAndSend(gmail);
-        }, checkInterval);
+        }, CHECK_INTERVAL);
 
     });
 })
@@ -44,10 +52,11 @@ function authorize(credentials, callback) {
     const {
         client_secret,
         client_id,
-        redirect_uris
+        redirect_uris,
     } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(
-        client_id, client_secret, redirect_uris[0]);
+        client_id, client_secret, redirect_uris[0],
+    );
 
     // Check if we have previously stored a token.
     fs.readFile(TOKEN_PATH, (err, token) => {
@@ -96,46 +105,62 @@ function sendMessageToMe(base64EncodedEmail, gmail) {
         })
 }
 
-function checkNewSMSAndSend(gmail) {
-    fs.readdir(inboxPath, function (err, inbox) {
+async function checkNewSMSAndSend(gmail) {
+    fs.readdir(inboxPath, async function (err, inbox) {
         if (err) return console.log(err);
-        if (inbox.length == 0) console.log(`No new SMS, ${new Date(Date.now()).toLocaleDateString('en-US', localTimeOptions)}`)
+        else if (inbox.length === 0) console.log(`No new SMS, ${new Date(Date.now()).toLocaleDateString('en-US', localTimeOptions)}`)
         else {
+            let messages = [];
             for (var i = 0; i < inbox.length; i++) {
                 let fn = inbox[i];
-                fs.readFile(path.resolve(inboxPath, fn), 'utf8', (err, data) => {
-                    if (err) return console.log(err)
-                    sendMessageToMe(createMessageBody(fn, data), gmail);
-                    // move sms sent to archive
-                    fs.rename(path.resolve(inboxPath, fn), path.resolve(archivePath, fn), (err) => {
+                await readFile(path.resolve(inboxPath, fn), 'utf8', )
+                    .then((data, err) => {
                         if (err) throw err;
-                        console.log(`Archived ${fn}`);
-                    })
-                    waitSync(3)
-                })
+                        console.log();
+                        messages.push({
+                            filename: fn,
+                            data: data
+                        })
+                    }).then(() => {
+                        // move sms sent to archive
+                        fs.rename(path.resolve(inboxPath, fn), path.resolve(archivePath, fn), (err) => {
+                            if (err) throw err;
+                            console.log(`Archived ${fn}`);
+                        })
+                    }).catch(console.log.bind(console));
             }
+            console.log(messages);
+            const emailEncoded = createMessageBody(messages)
+            sendMessageToMe(emailEncoded, gmail);
         }
     });
 }
 
-function createMessageBody(filename, content) {
-    // compose the email subject, using sender and timestamp
-    let name = filename.replace(/\D/g, '')
-    let t = new Date(
-        name.substring(0, 4),
-        name.substring(4, 6) - 1,
-        name.substring(6, 8),
-        name.substring(8, 10),
-        name.substring(10, 12),
-        name.substring(12, 14))
-    t = t.toLocaleDateString('en-US', localTimeOptions);
-    let sender = name.substring(16, name.length - 2);
-    let subject = `${t}, from ${sender}`;
-    // construct the encoded email body
+function createMessageBody(messages) {
+    const one = messages.length > 1 ? false : true;
     const message = new MIMEText()
-    message.setSender(myEmail)
-    message.setRecipient(myEmail)
+    let content = '';
+    let subject = '';
+    messages.map((file) => {
+        let name = file.filename.replace(/\D/g, '')
+        let t = new Date(
+            name.substring(0, 4),
+            name.substring(4, 6) - 1,
+            name.substring(6, 8),
+            name.substring(8, 10),
+            name.substring(10, 12),
+            name.substring(12, 14))
+        t = t.toLocaleDateString('en-US', localTimeOptions);
+        let sender = name.substring(16, name.length - 2);
+        subject = one ? `${t}, from ${sender}` : `${t}, ${messages.length} messages`;
+        content = one ? file.data : content + `\n \n${t}, from ${sender} \n ${file.data}`
+    })
+
+    message.setSender(MY_EMAIL)
+    message.setRecipient(MY_EMAIL)
     message.setSubject(subject)
     message.setMessage(content)
+    console.log(subject)
+    console.log(content)
     return message.asEncoded()
 }
