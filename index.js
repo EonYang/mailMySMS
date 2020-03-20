@@ -10,6 +10,7 @@ const {
     google,
 } = require('googleapis');
 const {
+    FILTER,
     INBOX_PATH,
     ARCHIVE_PATH,
     TOKEN_PATH,
@@ -111,23 +112,34 @@ async function checkNewSMSAndSend(gmail) {
         else if (inbox.length === 0) console.log(`No new SMS, ${new Date(Date.now()).toLocaleDateString('en-US', localTimeOptions)}`)
         else {
             let messages = [];
+            let isAD = false;
             for (var i = 0; i < inbox.length; i++) {
                 let fn = inbox[i];
                 await readFile(path.resolve(inboxPath, fn), 'utf8', )
                     .then((data, err) => {
                         if (err) throw err;
-                        console.log();
+                        if (FILTER.test(data)) isAD = true;
                         messages.push({
                             filename: fn,
                             data: data
                         })
-                    }).then(() => {
-                        // move sms sent to archive
-                        fs.rename(path.resolve(inboxPath, fn), path.resolve(archivePath, fn), (err) => {
-                            if (err) throw err;
-                            console.log(`Archived ${fn}`);
-                        })
+                        return isAD;
                     }).catch(console.log.bind(console));
+            }
+
+            for (let fn of inbox) {
+                let targetPath = path.resolve(archivePath, isAD ? "../ad/" : '', fn);
+                // move sms sent to archive
+                await rename(path.resolve(inboxPath, fn), targetPath).then(() => {
+                    if (err) throw err;
+                    console.log(`Archived ${targetPath}`);
+                }).catch(console.log.bind(console));
+
+            }
+
+            if (isAD) {
+                console.log("AD, aborted");
+                return
             }
             console.log(messages);
             const emailEncoded = createMessageBody(messages)
