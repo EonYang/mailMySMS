@@ -1,0 +1,22 @@
+# Configuration file for Gammu SMS Daemon
+
+# Gammu library configuration, see gammurc(5)
+[gammu]
+# Please configure this!
+port = /dev/ttyUSB0
+connection = at
+# Debugging
+#logformat = textall
+
+# SMSD configuration, see gammu-smsdrc(5)
+[smsd]
+service = files
+logfile = syslog
+# Increase for debugging information
+debuglevel = 255
+
+# Paths where messages are stored
+inboxpath = /home/pi/sms/inbox/
+outboxpath = /home/pi/sms/outbox/
+sentsmspath = /home/pi/sms/sent/
+errorsmspath = /home/pi/sms/error/

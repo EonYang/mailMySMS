@@ -1,0 +1,7 @@
+FROM python:3.7-slim-buster
+
+WORKDIR /app
+
+RUN pip install python-gammu==3.1
+
+COPY ./gammu .
